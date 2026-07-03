@@ -1,0 +1,129 @@
+HTML
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>スキップ付き動画</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.player {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+}
+
+#skipButton {
+    position: absolute;
+    right: 20px;
+    bottom: 80px;
+    display: none;
+    z-index: 99999;
+
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+
+    padding: 10px 18px;
+    font-size: 17px;
+    font-weight: 500;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#skipButton:active {
+    background: rgba(60, 60, 60, 0.95);
+}
+</style>
+</head>
+
+<body>
+
+<div class="player" id="player">
+
+    <video
+        id="video"
+        controls
+        playsinline
+        webkit-playsinline
+        preload="metadata"
+    >
+        <source src="video.mp4" type="video/mp4">
+        お使いのブラウザは動画を再生できません。
+    </video>
+
+    <button id="skipButton">スキップ ▶</button>
+
+</div>
+
+<script>
+const video = document.getElementById("video");
+const skipButton = document.getElementById("skipButton");
+
+const SHOW_TIME = 10.00;
+const SKIP_TO = 16.70;
+
+let skipped = false;
+
+function checkTime() {
+    if (video.currentTime >= SHOW_TIME && !skipped) {
+        skipButton.style.display = "block";
+    }
+}
+
+video.addEventListener("timeupdate", checkTime);
+
+setInterval(function () {
+    checkTime();
+}, 100);
+
+skipButton.addEventListener("click", function () {
+    video.currentTime = SKIP_TO;
+    skipped = true;
+    skipButton.style.display = "none";
+    video.play();
+});
+
+video.addEventListener("ended", function () {
+    skipButton.style.display = "none";
+});
+
+video.addEventListener("seeking", function () {
+    if (skipped) {
+        skipButton.style.display = "none";
+    }
+});
+</script>
+
+</body>
+</html>
+
